@@ -1,9 +1,13 @@
 require('dotenv').config({path:'../.env'});
+const http = require('http');
+const express = require('express');
+
+const app = express();
+const server = http.createServer(app);
+
 const { Server } = require("socket.io");
 
-
-const PORT = process.env.PORT || 8000;
-const io = new Server(PORT, {
+const io = new Server(server, {
   cors: true,
 });
 
@@ -39,4 +43,10 @@ io.on("connection", (socket) => {
     console.log("peer:nego:done", ans);
     io.to(to).emit("peer:nego:final", { from: socket.id, ans });
   });
+});
+
+
+const PORT = process.env.PORT || 8000;
+server.listen(PORT, () => {
+  console.log(`Server is running on port ${PORT}`);
 });
